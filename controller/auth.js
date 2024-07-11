@@ -3,7 +3,11 @@ const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendForgotPasswordEmail = require("../services/sendEmail");
-const { signupSchema, loginSchema } = require("../services/validation");
+const {
+  signupSchema,
+  loginSchema,
+  resetPasswordSchema,
+} = require("../services/validation");
 
 async function handleSignup(req, res) {
   try {
@@ -146,6 +150,16 @@ async function handleResetPassword(req, res) {
   try {
     const { email, resetPasswordToken, newPassword } = req.body;
     // console.log({ email, resetPasswordToken });
+
+    //validate the fields
+    const result = resetPasswordSchema.safeParse({
+      email,
+      resetPasswordToken,
+      newPassword,
+    });
+    if (!result.success) {
+      return res.status(400).json({ success: false, error: result.error });
+    }
 
     //find the user with these credentials
     const existingUser = await User.findOne({

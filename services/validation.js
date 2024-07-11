@@ -18,7 +18,16 @@ const loginSchema = z.object({
     .min(6, (message = "Password must be at least 6 characters long")),
 });
 
+const resetPasswordSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  resetPasswordToken: z.string(),
+  newPassword: z
+    .string()
+    .min(6, (message = "Password must be at least 6 characters long")),
+});
+
 module.exports = {
   signupSchema,
   loginSchema,
+  resetPasswordSchema,
 };
